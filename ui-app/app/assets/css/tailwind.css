@@ -1,0 +1,11 @@
+@layer theme, utilities;
+@import "tailwindcss/theme.css" layer(theme) prefix(tw);
+@import "tailwindcss/utilities.css" layer(utilities) prefix(tw);
+@source "../../";
+
+@theme {
+	--color-indire-navy: #0d2d80;
+	--color-indire-blue: #1455c1;
+	--color-indire-soft: #eef3ff;
+	--color-indire-ink: #13214d;
+}
