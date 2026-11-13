@@ -1,3 +1,13 @@
+<script setup lang="ts">
+definePageMeta({
+	layout: 'landing-layout'
+});
+
+</script>
+
+
+
+
 <template>
   <section class="simple-page panel">
     <div class="simple-hero"><span class="material-symbols-rounded big-icon">home</span><div><p class="eyebrow">PIATTAFORMA INDIRE</p><h1>Benvenuto nella tua area docente</h1><p>Riprendi il percorso di riflessione sul disagio giovanile e trova rapidamente gli strumenti per accompagnare i tuoi studenti.</p></div></div>

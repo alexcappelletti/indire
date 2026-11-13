@@ -4,7 +4,7 @@ import { useRoute } from 'vue-router'
 const route = useRoute()
 const navigation = [
 	{ label: 'Home', to: '/home', icon: 'home' },
-	{ label: 'Agente conversazionale', to: '/', icon: 'forum' },
+	{ label: 'Agente conversazionale', to: '/conversationPage', icon: 'forum' },
 	{ label: 'Percorso e-learning', to: '/percorso-e-learning', icon: 'menu_book' },
 	{ label: 'Risorse', to: '/risorse', icon: 'folder_open' },
 ]
@@ -18,7 +18,7 @@ function isActive(path: string) {
 	<v-app class="main-layout">
 		<v-app-bar class="main-app-bar" elevation="0" height="88">
 			<div class="app-bar-inner">
-				<NuxtLink to="/" class="brand-link" aria-label="Torna all'agente conversazionale">
+				<NuxtLink to="/conversationPage" class="brand-link" aria-label="Torna all'agente conversazionale">
 					<div class="brain-mark">🧠</div>
 					<div class="brand-copy">
 						<div class="brand-title">Piattaforma INDIRE – Prevenzione delle dipendenze e disagio giovanile</div>
@@ -101,7 +101,7 @@ function isActive(path: string) {
 
 .brand-title {
 		color: #0d2d80;
-		font-size: 22px;
+		font-size: 18px;
 		font-weight: 800;
 		line-height: 1.15;
 		white-space: nowrap;
@@ -110,7 +110,7 @@ function isActive(path: string) {
 .brand-subtitle {
 		margin-top: 5px;
 		color: #183274;
-		font-size: 16px;
+		font-size: 13px;
 		font-weight: 600;
 	}
 
@@ -128,7 +128,7 @@ function isActive(path: string) {
 		padding: 11px 14px;
 		border-radius: 15px;
 		color: #102467;
-		font-size: 15px;
+		font-size: 13px;
 		font-weight: 700;
 		text-decoration: none;
 		white-space: nowrap;
