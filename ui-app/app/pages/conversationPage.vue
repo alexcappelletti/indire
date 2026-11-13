@@ -2,6 +2,7 @@
 import { nextTick, ref } from 'vue'
 import chatComponent from '@/components/chatComponent.vue'
 import metacognitivePanel from '@/components/metacognitivePanel.vue'
+import indexedResPanel from '@/components/indexedResPanel.vue'
 
 definePageMeta({ layout: 'main-layout' })
 
@@ -9,7 +10,14 @@ definePageMeta({ layout: 'main-layout' })
 
 <template>
 	<v-container fluid class="conversation-page">
-		<chatComponent class="chat-panel" />
+		<v-row class="conversation-main-row" no-gutters>
+			<v-col cols="9" class="chat-panel">
+				<chatComponent />
+			</v-col>
+			<v-col cols="3" class="resources-panel-wrapper">
+				<indexedResPanel />
+			</v-col>
+		</v-row>
 		<metacognitivePanel class="metacognitive-panel-wrapper" />
 	</v-container>
 </template>
@@ -27,14 +35,25 @@ definePageMeta({ layout: 'main-layout' })
 }
 
 .chat-panel,
+.resources-panel-wrapper,
 .metacognitive-panel-wrapper {
 	min-height: 0;
 	width: 100%;
 }
 
-.chat-panel {
+.conversation-main-row {
 	flex: 1 1 auto;
-	height: 0;
+	min-height: 0;
+	width: 100%;
+}
+
+.conversation-main-row > .v-col { height: 100%; }
+
+.conversation-main-row > .chat-panel { padding-right: 6px; }
+.conversation-main-row > .resources-panel-wrapper { padding-left: 6px; }
+
+.resources-panel-wrapper {
+	height: 100%;
 }
 
 .metacognitive-panel-wrapper {
@@ -76,5 +95,20 @@ definePageMeta({ layout: 'main-layout' })
 	min-height: 0;
 	flex: 0 0 auto;
 	overflow: visible;
+}
+
+@media (max-width: 900px) {
+	.conversation-main-row {
+		overflow-y: auto;
+	}
+
+	.conversation-main-row .chat-panel,
+	.resources-panel-wrapper {
+		padding-left: 0;
+		padding-right: 0;
+		flex: 0 0 100%;
+		max-width: 100%;
+		height: 480px;
+	}
 }
 </style>
