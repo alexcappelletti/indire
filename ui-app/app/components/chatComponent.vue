@@ -10,7 +10,7 @@ const draft = ref('')
 const isTyping = ref(true)
 const appStore = useAppStore()
 
-const messagesArea = ref<HTMLElement | null>(null)
+const messagesArea = ref<{ $el?: HTMLElement } | HTMLElement | null>(null)
 const messages = ref<Message[]>([
 	{ role: 'agent', text: 'Per iniziare, ti propongo una domanda di riflessione:\nCosa noti, nel tuo contesto scolastico, che potrebbe essere un segnale precoce\ndi disagio o di uso di sostanze in un/a studente/ssa?', time: '10:24' },
 	{ role: 'user', text: 'Ho notato un calo del rendimento e maggiori assenze in un mio alunno,\nma non so se sia un normale periodo di difficoltà.', time: '10:27' },
@@ -34,7 +34,8 @@ function sendMessage() {
 
 async function scrollMessagesToBottom() {
 	await nextTick()
-	const area = messagesArea.value
+	const target = messagesArea.value
+	const area = target && '$el' in target ? target.$el : target
 	if (!area) return
 
 	area.scrollTo({
@@ -205,9 +206,12 @@ onMounted(scrollMessagesToBottom)
 }
 
 .messages-area {
+	height: 0;
+	flex: 1 1 0;
 	min-height: calc(100vh - 350px);
 	padding: 26px 37px 20px;
 	background: #fff;
+	overflow-y: auto;
 }
 
 .message-row {
