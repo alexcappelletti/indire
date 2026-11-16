@@ -1,10 +1,13 @@
 <script setup lang="ts">
-import Footer from '@/components/footer.vue';
-
+	import Footer from '@/components/footer.vue';
 </script>
 <template>
-	<div>
-		<slot></slot>
-		<Footer></Footer>
-	</div>
+	<v-app class="landing-layout">
+		<v-main>
+			<slot />
+		</v-main>
+		<Footer />
+	</v-app>
 </template>
+
+<style scoped lang="scss"></style>

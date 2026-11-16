@@ -1,6 +1,77 @@
 <script setup lang="ts">
-const resources = [{ title: "Leggere i segnali: accorgersi in tempo dell’uso di sostanze tra scuola e famiglia", author: 'C. Caruso', relevance: 94 }, { title: 'Segnali precoci di dipendenza da sostanze: indicatori comportamentali, fisici e psicologici', author: 'C. Caruso', relevance: 87 }, { title: 'La scuola come presidio: il ruolo educativo nella prevenzione e nell’intervento precoce', author: 'C. Caruso', relevance: 79 }, { title: 'Presentazione – Adolescenza e vulnerabilità ai comportamenti a rischio', author: 'C. Caruso', relevance: 68 }]
+	definePageMeta({
+		layout: 'main-layout',
+	});
+	const resources = [
+		{
+			title: 'Leggere i segnali: accorgersi in tempo dell’uso di sostanze tra scuola e famiglia',
+			author: 'C. Caruso',
+			relevance: 94,
+		},
+		{
+			title: 'Segnali precoci di dipendenza da sostanze: indicatori comportamentali, fisici e psicologici',
+			author: 'C. Caruso',
+			relevance: 87,
+		},
+		{
+			title: 'La scuola come presidio: il ruolo educativo nella prevenzione e nell’intervento precoce',
+			author: 'C. Caruso',
+			relevance: 79,
+		},
+		{
+			title: 'Presentazione – Adolescenza e vulnerabilità ai comportamenti a rischio',
+			author: 'C. Caruso',
+			relevance: 68,
+		},
+	];
 </script>
 <template>
-  <section class="simple-page panel"><div class="page-heading"><span class="material-symbols-rounded big-icon">folder_open</span><div><p class="eyebrow">BIBLIOTECA DELLA PIATTAFORMA</p><h1>Risorse</h1><p>Materiali, guide e approfondimenti per sostenere la prevenzione e la lettura professionale del disagio giovanile.</p></div></div><div class="filter-row"><button class="filter active"><span class="material-symbols-rounded">apps</span>Tutte</button><button class="filter"><span class="material-symbols-rounded">picture_as_pdf</span>PDF e guide</button><button class="filter"><span class="material-symbols-rounded">slideshow</span>Presentazioni</button><label><span class="material-symbols-rounded">search</span><input placeholder="Cerca una risorsa"></label></div><div class="resource-cards"><article v-for="resource in resources" :key="resource.title" class="resource-card"><div class="card-top"><span class="material-symbols-rounded">picture_as_pdf</span><span class="tag">{{ resource.relevance }}% pertinente</span></div><h2>{{ resource.title }}</h2><p>{{ resource.author }} · Materiale consigliato dall’agente</p><button>Apri risorsa <span class="material-symbols-rounded">open_in_new</span></button></article></div></section>
+	<section class="simple-page panel">
+		<div class="page-heading">
+			<span class="material-symbols-rounded big-icon">folder_open</span>
+			<div>
+				<p class="eyebrow">BIBLIOTECA DELLA PIATTAFORMA</p>
+				<h1>Risorse</h1>
+				<p>
+					Materiali, guide e approfondimenti per sostenere la
+					prevenzione e la lettura professionale del disagio
+					giovanile.
+				</p>
+			</div>
+		</div>
+		<div class="filter-row">
+			<button class="filter active">
+				<span class="material-symbols-rounded">apps</span>Tutte</button
+			><button class="filter">
+				<span class="material-symbols-rounded">picture_as_pdf</span>PDF
+				e guide</button
+			><button class="filter">
+				<span class="material-symbols-rounded">slideshow</span
+				>Presentazioni</button
+			><label
+				><span class="material-symbols-rounded">search</span
+				><input placeholder="Cerca una risorsa"
+			/></label>
+		</div>
+		<div class="resource-cards">
+			<article
+				v-for="resource in resources"
+				:key="resource.title"
+				class="resource-card"
+			>
+				<div class="card-top">
+					<span class="material-symbols-rounded">picture_as_pdf</span
+					><span class="tag"
+						>{{ resource.relevance }}% pertinente</span
+					>
+				</div>
+				<h2>{{ resource.title }}</h2>
+				<p>{{ resource.author }} · Materiale consigliato dall’agente</p>
+				<button>
+					Apri risorsa
+					<span class="material-symbols-rounded">open_in_new</span>
+				</button>
+			</article>
+		</div>
+	</section>
 </template>

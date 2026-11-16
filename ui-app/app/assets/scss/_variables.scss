@@ -1,0 +1,29 @@
+// Design tokens condivisi dell'applicazione.
+
+$font-family-base: 'Roboto', 'Segoe UI', Arial, sans-serif;
+$font-family-mono: 'Fira Code', Consolas, monospace;
+
+$color-white: #ffffff;
+$color-ink: #13214d;
+$color-navy: #102c7f;
+$color-blue: #1554be;
+$color-blue-soft: #eef3ff;
+$color-border: #dce5fa;
+$color-muted: #526384;
+$color-success: #45b95d;
+$color-warning: #f6bd2d;
+
+$text-xs: 0.75rem;
+$text-sm: 0.875rem;
+$text-md: 1rem;
+$text-lg: 1.25rem;
+$text-xl: 1.5rem;
+$text-2xl: 1.75rem;
+
+$line-height-body: 1.4;
+$line-height-tight: 1.15;
+
+$radius-sm: 10px;
+$radius-md: 16px;
+$radius-lg: 22px;
+$shadow-card: 0 8px 24px rgba(41, 76, 153, 0.08);

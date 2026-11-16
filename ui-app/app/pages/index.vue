@@ -1,8 +1,7 @@
 <script setup lang="ts">
-definePageMeta({
-	layout: 'main-layout',
-});
-
+	definePageMeta({
+		layout: 'main-layout',
+	});
 </script>
 
 <template>

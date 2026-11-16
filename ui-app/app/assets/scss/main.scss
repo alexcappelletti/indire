@@ -1,12 +1,22 @@
+@use './variables' as *;
+
 // Stili di base condivisi dall'applicazione.
 
 :root {
-	font-family: 'Roboto', 'Segoe UI', Arial, sans-serif;
+	font-family: $font-family-base;
 	font-size: 16px;
 	font-synthesis: none;
 	text-rendering: optimizeLegibility;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
+	--indire-ink: #{$color-ink};
+	--indire-navy: #{$color-navy};
+	--indire-blue: #{$color-blue};
+	--indire-blue-soft: #{$color-blue-soft};
+	--indire-border: #{$color-border};
+	--indire-muted: #{$color-muted};
+	--indire-success: #{$color-success};
+	--indire-warning: #{$color-warning};
 }
 
 *,
@@ -24,11 +34,11 @@ body,
 }
 
 body {
-	background: #fff;
-	color: #13214d;
+	background: $color-white;
+	color: $color-ink;
 	font-family: inherit;
 	font-size: 1rem;
-	line-height: 1.4;
+	line-height: $line-height-body;
 }
 
 button,
@@ -63,9 +73,9 @@ p {
 // Superficie base dell'app Vuetify.
 .v-application {
 	font-family: inherit;
-	color: #13214d;
+	color: $color-ink;
 }
 
 .v-main {
-	background: #fff;
+	background: $color-white;
 }
