@@ -55,6 +55,7 @@
 				body: { credential: response.credential },
 			});
 			appStore.setAuthUser(user);
+			await navigateTo('/home');
 		} catch (error) {
 			errorMessage.value =
 				error instanceof Error

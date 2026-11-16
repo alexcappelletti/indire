@@ -38,6 +38,17 @@ export const useAppStore = defineStore('appStore', () => {
 		authUser.value = user;
 		isLoggedIn.value = true;
 	}
+
+	async function logout() {
+		authUser.value = null;
+		isLoggedIn.value = false;
+
+		try {
+			await $fetch('/api/auth/logout', { method: 'POST' });
+		} catch {
+			// Lo stato locale resta comunque disconnesso.
+		}
+	}
 	const getError = computed(() => error.value);
 	const appTitle = computed(() => title.value);
 
@@ -49,6 +60,7 @@ export const useAppStore = defineStore('appStore', () => {
 		setLoggedIn,
 		authUser,
 		setAuthUser,
+		logout,
 		conversationMessages,
 		addConversationMessage,
 	};

@@ -1,7 +1,9 @@
 <script setup lang="ts">
 	import { useRoute } from 'vue-router';
+	import { useAppStore } from '@/stores/appStore';
 
 	const route = useRoute();
+	const appStore = useAppStore();
 	const navigation = [
 		{ label: 'Home', to: '/home', icon: 'home' },
 		{
@@ -19,6 +21,11 @@
 
 	function isActive(path: string) {
 		return route.path === path;
+	}
+
+	async function handleLogout() {
+		await appStore.logout();
+		await navigateTo('/');
 	}
 </script>
 
@@ -56,8 +63,8 @@
 						}}</span>
 						<span>{{ item.label }}</span>
 					</NuxtLink>
-					<button class="profile-button" aria-label="Profilo">
-						<span class="material-symbols-rounded">person</span>
+					<button class="profile-button" aria-label="Esci" title="Esci" @click="handleLogout">
+						<span class="material-symbols-rounded">logout</span>
 					</button>
 				</nav>
 			</div>
