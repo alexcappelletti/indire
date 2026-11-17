@@ -1,32 +1,7 @@
 <script setup lang="ts">
-	type Step = {
-		number: number;
-		label: string;
-		state: 'completed' | 'current' | 'upcoming';
-	};
+	import { mockMetacognitivePath } from '#shared/mocks/learning';
 
-	const steps: Step[] = [
-		{ number: 1, label: 'Osservare\ni segnali', state: 'completed' },
-		{
-			number: 2,
-			label: 'Organizzare\nle informazioni',
-			state: 'completed',
-		},
-		{
-			number: 3,
-			label: 'Formulare\nipotesi\neducative',
-			state: 'completed',
-		},
-		{ number: 4, label: 'Confrontare\ninterpretazioni', state: 'current' },
-		{ number: 5, label: 'Condividere\ne coinvolgere', state: 'upcoming' },
-		{ number: 6, label: 'Orientare\nalla rete', state: 'upcoming' },
-		{
-			number: 7,
-			label: "Pianificare\nl'azione\neducativa",
-			state: 'upcoming',
-		},
-		{ number: 8, label: 'Verificare\ne riprogettare', state: 'upcoming' },
-	];
+	const { steps } = mockMetacognitivePath;
 </script>
 
 <template>
@@ -85,7 +60,7 @@
 								step.number
 							}}</v-card-subtitle>
 							<v-card-text class="step-label">{{
-								step.label
+								step.mapLabel
 							}}</v-card-text>
 						</v-sheet>
 					</v-sheet>

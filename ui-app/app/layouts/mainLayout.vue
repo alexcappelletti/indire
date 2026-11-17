@@ -1,23 +1,10 @@
 <script setup lang="ts">
 	import { useRoute } from 'vue-router';
 	import { useAppStore } from '@/stores/appStore';
+	import { mainNavigation as navigation } from '#shared/data/navigation';
 
 	const route = useRoute();
 	const appStore = useAppStore();
-	const navigation = [
-		{ label: 'Home', to: '/home', icon: 'home' },
-		{
-			label: 'Agente conversazionale',
-			to: '/conversationPage',
-			icon: 'forum',
-		},
-		{
-			label: 'Percorso e-learning',
-			to: '/percorso-e-learning',
-			icon: 'menu_book',
-		},
-		{ label: 'Risorse', to: '/risorse', icon: 'folder_open' },
-	];
 
 	function isActive(path: string) {
 		return route.path === path;

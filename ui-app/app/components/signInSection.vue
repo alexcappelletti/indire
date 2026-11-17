@@ -1,22 +1,10 @@
 <script setup lang="ts">
 	import { onMounted, ref } from 'vue';
 	import { useAppStore } from '@/stores/appStore';
-
-	type GoogleCredentialResponse = { credential: string };
-	type GoogleApi = {
-		accounts: {
-			id: {
-				initialize: (config: {
-					client_id: string;
-					callback: (response: GoogleCredentialResponse) => void;
-				}) => void;
-				renderButton: (
-					element: HTMLElement,
-					options: Record<string, unknown>,
-				) => void;
-			};
-		};
-	};
+	import type {
+		GoogleApi,
+		GoogleCredentialResponse,
+	} from '@/types/google';
 
 	declare global {
 		interface Window {

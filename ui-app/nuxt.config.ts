@@ -19,6 +19,7 @@ export default defineNuxtConfig({
 		sessionSecret: process.env.SESSION_SECRET || '',
 		mongoUri: process.env.MONGODB_URI || '',
 		mongoDbName: process.env.MONGODB_DB_NAME || '',
+		gridFsBucketName: process.env.GRIDFS_BUCKET_NAME || 'resourceBucket',
 		public: {
 			googleClientId: process.env.GOOGLE_CLIENT_ID || '',
 		},

@@ -1,14 +1,10 @@
 import { createHmac, timingSafeEqual } from 'node:crypto'
 import type { H3Event } from 'h3'
+import type { AuthUser } from '#shared/types/auth'
 
 export const AUTH_COOKIE = 'indire_session'
 
-export type SessionUser = {
-	sub: string
-	name: string
-	email: string
-	picture?: string
-}
+export type SessionUser = AuthUser
 
 function secret(event: H3Event) {
 	const value = useRuntimeConfig(event).sessionSecret

@@ -8,6 +8,7 @@
 		"generate": "nuxt generate",
 		"preview": "nuxt preview",
 		"postinstall": "nuxt prepare",
+		"resource:upload": "node --env-file=.env scripts/upload-resource.mjs",
 		"format": "prettier --write \"app/**/*.{vue,ts,scss,css}\"",
 		"format:check": "prettier --check \"app/**/*.{vue,ts,scss,css}\""
 	},
@@ -15,6 +16,7 @@
 		"@pinia/nuxt": "^1.0.3",
 		"@vueuse/nuxt": "^15.0.0",
 		"google-auth-library": "^11.3.4",
+		"mongodb": "^7.9.0",
 		"mongoose": "^9.12.1",
 		"nuxt": "^4.6.4",
 		"pinia": "^4.1.0",

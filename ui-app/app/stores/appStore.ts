@@ -1,17 +1,6 @@
 import { defineStore } from 'pinia';
-
-export type ConversationMessage = {
-	role: 'agent' | 'user';
-	text: string;
-	time: string;
-};
-
-export type AuthUser = {
-	sub: string;
-	name: string;
-	email: string;
-	picture?: string;
-};
+import type { AuthUser } from '#shared/types/auth';
+import type { ConversationMessage } from '#shared/types/conversation';
 
 export const useAppStore = defineStore('appStore', () => {
 	const error = ref<string | null>(null);

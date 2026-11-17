@@ -1,17 +1,16 @@
 <script setup lang="ts">
 	import { nextTick, onMounted, ref, watch } from 'vue';
 	import { useAppStore } from '@/stores/appStore';
+	import type { ConversationMessage } from '#shared/types/conversation';
 
 	definePageMeta({ layout: 'main-layout' });
-
-	type Message = { role: 'agent' | 'user'; text: string; time: string };
 
 	const draft = ref('');
 	const isTyping = ref(true);
 	const appStore = useAppStore();
 
 	const messagesArea = ref<{ $el?: HTMLElement } | HTMLElement | null>(null);
-	const messages = ref<Message[]>([
+	const messages = ref<ConversationMessage[]>([
 		{
 			role: 'agent',
 			text: 'Per iniziare, ti propongo una domanda di riflessione:\nCosa noti, nel tuo contesto scolastico, che potrebbe essere un segnale precoce\ndi disagio o di uso di sostanze in un/a studente/ssa?',

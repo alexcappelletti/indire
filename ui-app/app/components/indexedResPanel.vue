@@ -1,32 +1,13 @@
 <script setup lang="ts">
-	type Resource = {
-		title: string;
-		author: string;
-		relevance: number;
-	};
+	import { platformResources } from '#shared/data/resources';
 
-	const resources: Resource[] = [
-		{
-			title: "Leggere i segnali: accorgersi in tempo dell'uso di sostanze tra scuola e famiglia",
-			author: 'C. Caruso',
-			relevance: 94,
-		},
-		{
-			title: 'Segnali precoci di dipendenza da sostanze: indicatori comportamentali, fisici e psicologici',
-			author: 'C. Caruso',
-			relevance: 87,
-		},
-		{
-			title: 'La scuola come presidio: il ruolo educativo nella prevenzione e nell’intervento precoce',
-			author: 'C. Caruso',
-			relevance: 79,
-		},
+	const resources = platformResources; /*
 		{
 			title: 'Presentazione – Adolescenza e vulnerabilità ai comportamenti a rischio',
 			author: 'C. Caruso',
 			relevance: 68,
 		},
-	];
+	*/
 </script>
 
 <template>
