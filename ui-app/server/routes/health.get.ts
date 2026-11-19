@@ -31,13 +31,13 @@ export default defineEventHandler(async (event) => {
 	}
 
 	return { ok: mongoOk,
-		mongodb: {
-			ok: mongoOk,
-			connected: mongoConnected,
-			dbName: mongoDbName,
-			exists: mongoExists,
-			message: mongoMessage,
-		},
+		// mongodb: {
+		// 	ok: mongoOk,
+		// 	connected: mongoConnected,
+		// 	dbName: mongoDbName,
+		// 	exists: mongoExists,
+		// 	message: mongoMessage,
+		// },
 
 
 
