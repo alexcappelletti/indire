@@ -30,7 +30,18 @@ export default defineEventHandler(async (event) => {
 		mongoMessage = error?.statusMessage || error?.message || 'MongoDB unreachable';
 	}
 
-	return { ok: mongoOk };
+	return { ok: mongoOk,
+		mongodb: {
+			ok: mongoOk,
+			connected: mongoConnected,
+			dbName: mongoDbName,
+			exists: mongoExists,
+			message: mongoMessage,
+		},
+
+
+
+	};
 	/*
 	return {
 		// Redis non è ancora configurato: il servizio HTTP può comunque essere attivo.
