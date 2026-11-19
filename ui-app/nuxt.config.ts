@@ -20,6 +20,12 @@ export default defineNuxtConfig({
 		mongoUri: process.env.MONGODB_URI || '',
 		mongoDbName: process.env.MONGODB_DB_NAME || '',
 		gridFsBucketName: process.env.GRIDFS_BUCKET_NAME || 'resourceBucket',
+		agentApiKey: process.env.OPENAI_API_KEY || '',
+		agentModel: process.env.OPENAI_MODEL || '',
+		agentSystemPrompt: process.env.OPENAI_SYSTEM_PROMPT || '',
+		agentSkillPrompt: process.env.OPENAI_AGENT_SKILL_PROMPT || '',
+		agentVectorStoreId: process.env.OPENAI_VECTOR_STORE_ID || '',
+		agentPromptId: process.env.OPENAI_PROMPT_ID || '',
 		public: {
 			googleClientId: process.env.GOOGLE_CLIENT_ID || '',
 		},

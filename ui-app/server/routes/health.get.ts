@@ -1,4 +1,4 @@
-import { ensureMongoConnection } from './utils/mongoClient';
+import { ensureMongoConnection } from '../utils/mongoClient';
 
 export default defineEventHandler(async (event) => {
 	let redisOk = false;
@@ -9,18 +9,6 @@ export default defineEventHandler(async (event) => {
 	let mongoMessage = '';
 	let mongoDbName = '';
 
-	// try {
-	// 	const pong = await withRedisClient(event, async (client) =>
-	// 		client.ping(),
-	// 	);
-	// 	redisOk = typeof pong === 'string' && pong.toUpperCase() === 'PONG';
-	// 	redisMessage = String(pong || '');
-	// } catch (error: any) {
-	// 	redisOk = false;
-	// 	redisMessage =
-	// 		error?.statusMessage || error?.message || 'Redis unreachable';
-	// }
-
 	try {
 		const mongoose = await ensureMongoConnection(event);
 		mongoConnected = mongoose.connection.readyState === 1;
@@ -29,34 +17,27 @@ export default defineEventHandler(async (event) => {
 		if (mongoConnected && mongoose.connection.db) {
 			const admin = mongoose.connection.db.admin();
 			const databases = await admin.listDatabases();
-			const dbList = Array.isArray(databases?.databases)
-				? databases.databases
-				: [];
+			const dbList = Array.isArray(databases?.databases) ? databases.databases : [];
 			mongoExists = dbList.some((db) => db?.name === mongoDbName);
 			mongoOk = mongoConnected && mongoExists;
 			mongoMessage = mongoOk
 				? 'MongoDB reachable and database found'
 				: 'MongoDB connected but database not found';
 		} else {
-			mongoOk = false;
 			mongoMessage = 'MongoDB not connected';
 		}
 	} catch (error: any) {
-		mongoOk = false;
-		mongoConnected = false;
-		mongoExists = false;
-		mongoMessage =
-			error?.statusMessage || error?.message || 'MongoDB unreachable';
+		mongoMessage = error?.statusMessage || error?.message || 'MongoDB unreachable';
 	}
 
+	return { ok: mongoOk };
+	/*
 	return {
-		ok: redisOk && mongoOk,
-		service: 'msp-plan-builder',
+		// Redis non è ancora configurato: il servizio HTTP può comunque essere attivo.
+		ok: mongoOk,
+		service: 'indire',
 		timestamp: new Date().toISOString(),
-		redis: {
-			ok: redisOk,
-			message: redisMessage,
-		},
+		redis: { ok: redisOk, message: redisMessage },
 		mongodb: {
 			ok: mongoOk,
 			connected: mongoConnected,
@@ -65,4 +46,5 @@ export default defineEventHandler(async (event) => {
 			message: mongoMessage,
 		},
 	};
+	*/
 });

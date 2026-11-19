@@ -4,9 +4,10 @@ import type {
 	MetacognitiveOverviewItem,
 	MetacognitiveProgress,
 	ReflectionSummary,
+	UserMetacognitivePath,
 } from '#shared/types/metacognition';
 
-export const mockLearningPath: LearningStep[] = [
+export const learningPathMock: LearningStep[] = [
 	{ number: 1, title: 'Osservare i segnali', mapLabel: 'Osservare\ni segnali', state: 'completed' },
 	{ number: 2, title: 'Organizzare le informazioni', mapLabel: 'Organizzare\nle informazioni', state: 'completed' },
 	{ number: 3, title: 'Formulare ipotesi educative', mapLabel: 'Formulare\nipotesi\neducative', state: 'completed' },
@@ -17,27 +18,32 @@ export const mockLearningPath: LearningStep[] = [
 	{ number: 8, title: 'Verificare e riprogettare', mapLabel: 'Verificare\ne riprogettare', state: 'upcoming' },
 ];
 
-export const mockReflectionSummary: ReflectionSummary = {
+export const reflectionSummaryMock: ReflectionSummary = {
 	text: "Hai osservato più segnali (isolamento, assenze) e formulato un'ipotesi di disagio, considerando anche l'ipotesi alternativa di un cambiamento fisiologico. Stai ampliando la raccolta di elementi per il confronto.",
 	updatedAt: '2026-11-17T10:28:00.000Z',
 };
 
-export const mockMetacognitiveProgress: MetacognitiveProgress = {
+export const metacognitiveProgressMock: MetacognitiveProgress = {
 	completedSteps: 3,
 	stepsToExplore: 2,
 	openQuestion: 'Quali ulteriori evidenze, scolastiche o relazionali, possono aiutarti a discriminare tra le ipotesi?',
 	currentStepState: 'current',
 };
 
-export const mockOverviewItems: MetacognitiveOverviewItem[] = [
+export const overviewItemsMock: MetacognitiveOverviewItem[] = [
 	{ label: 'Dimensioni esplorate: 3', detail: '(osservazione, organizzazione, ipotesi)', state: 'completed' },
 	{ label: 'Da approfondire: 2', detail: '(condivisione, rete)', state: 'pending' },
-	{ label: 'Domanda ancora aperta', detail: mockMetacognitiveProgress.openQuestion, state: 'question' },
+	{ label: 'Domanda ancora aperta', detail: metacognitiveProgressMock.openQuestion, state: 'question' },
 ];
 
-export const mockMetacognitivePath: MetacognitivePath = {
-	steps: mockLearningPath,
-	progress: mockMetacognitiveProgress,
-	summary: mockReflectionSummary,
-	overview: mockOverviewItems,
+export const metacognitivePathMock: MetacognitivePath = {
+	steps: learningPathMock,
+	progress: metacognitiveProgressMock,
+	summary: reflectionSummaryMock,
+	overview: overviewItemsMock,
+};
+
+export const userMetacognitivePathMock: UserMetacognitivePath = {
+	userId: 'mock-user-001',
+	path: metacognitivePathMock,
 };

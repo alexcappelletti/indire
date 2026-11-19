@@ -1,13 +1,16 @@
 import { readMultipartFormData } from 'h3';
 import { readSession } from '../../utils/auth-session';
 import { uploadPdfResource } from '../../services/resourceUpload';
+import { enforceRateLimit } from '../../utils/rateLimit';
 
 const MAX_PDF_SIZE = 50 * 1024 * 1024;
 
 export default defineEventHandler(async (event) => {
-	if (!readSession(event)) {
+	const session = readSession(event);
+	if (!session) {
 		throw createError({ statusCode: 401, statusMessage: 'Autenticazione richiesta' });
 	}
+	enforceRateLimit(event, `resource-upload:${session.sub}`, 5, 10 * 60_000);
 
 	const parts = await readMultipartFormData(event);
 	const filePart = parts?.find((part) => part.name === 'file');

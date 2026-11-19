@@ -1,14 +1,15 @@
-export { mockAuthUser } from './auth';
+export { authUserMock } from './authMock';
 export {
-	mockAgentFollowUp,
-	mockConversationMessages,
-	mockConversationResponse,
-} from './conversation';
+	agentFollowUpMock,
+	conversationMessagesMock,
+	conversationResponseMock,
+} from './conversationMock';
 export {
-	mockLearningPath,
-	mockMetacognitivePath,
-	mockMetacognitiveProgress,
-	mockOverviewItems,
-	mockReflectionSummary,
-} from './learning';
-export { mockResources, mockResourcesResponse } from './resources';
+	learningPathMock,
+	metacognitivePathMock,
+	metacognitiveProgressMock,
+	userMetacognitivePathMock,
+	overviewItemsMock,
+	reflectionSummaryMock,
+} from './learningMock';
+export { resourcesMock, resourcesResponseMock } from './resourcesMock';

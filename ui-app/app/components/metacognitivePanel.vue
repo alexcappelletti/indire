@@ -1,7 +1,7 @@
 <script setup lang="ts">
-	import { mockMetacognitivePath } from '#shared/mocks/learning';
+	import { metacognitivePathMock } from '#shared/mocks/learningMock';
 
-	const { steps } = mockMetacognitivePath;
+	const { steps } = metacognitivePathMock;
 </script>
 
 <template>

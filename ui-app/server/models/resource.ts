@@ -1,6 +1,6 @@
-import { model, models, Schema } from 'mongoose';
+import mongoose from 'mongoose';
 
-const resourceSchema = new Schema(
+const resourceSchema = new mongoose.Schema(
 	{
 		title: { type: String, required: true, trim: true },
 		author: { type: String, required: true, trim: true },
@@ -9,13 +9,13 @@ const resourceSchema = new Schema(
 		folderPath: { type: String, required: true, trim: true },
 		mimeType: { type: String, enum: ['application/pdf'], default: 'application/pdf', required: true },
 		sizeBytes: { type: Number, required: true, min: 1 },
-		gridFsFileId: { type: Schema.Types.ObjectId, required: true, index: true },
+		gridFsFileId: { type: mongoose.Schema.Types.ObjectId, required: true, index: true },
 		relevance: { type: Number, min: 0, max: 100, default: 0 },
 		isPublished: { type: Boolean, default: false, index: true },
 	},
-	{ timestamps: true },
+	{ timestamps: true, collection: 'resourceBucket' },
 );
 
 resourceSchema.index({ isPublished: 1, createdAt: -1 });
 
-export const ResourceModel = models.Resource || model('Resource', resourceSchema);
+export const ResourceModel = mongoose.models.Resource || mongoose.model('Resource', resourceSchema);

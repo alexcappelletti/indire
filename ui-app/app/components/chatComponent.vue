@@ -1,52 +1,106 @@
 <script setup lang="ts">
 	import { nextTick, onMounted, ref, watch } from 'vue';
+	import DOMPurify from 'isomorphic-dompurify';
+	import { storeToRefs } from 'pinia';
+	import { marked } from 'marked';
 	import { useAppStore } from '@/stores/appStore';
+	import type { MessageResponse } from '#shared/types/api';
 	import type { ConversationMessage } from '#shared/types/conversation';
+	import {conversationMessagesMock} from '#shared/mocks/conversationMock';
 
 	definePageMeta({ layout: 'main-layout' });
 
 	const draft = ref('');
-	const isTyping = ref(true);
+	const isTyping = ref(false);
+	const conversationId = ref<string>();
 	const appStore = useAppStore();
+	const { referenceFiles } = storeToRefs(appStore);
 
 	const messagesArea = ref<{ $el?: HTMLElement } | HTMLElement | null>(null);
-	const messages = ref<ConversationMessage[]>([
-		{
-			role: 'agent',
-			text: 'Per iniziare, ti propongo una domanda di riflessione:\nCosa noti, nel tuo contesto scolastico, che potrebbe essere un segnale precoce\ndi disagio o di uso di sostanze in un/a studente/ssa?',
-			time: '10:24',
-		},
-		{
-			role: 'user',
-			text: 'Ho notato un calo del rendimento e maggiori assenze in un mio alunno,\nma non so se sia un normale periodo di difficoltà.',
-			time: '10:27',
-		},
-		{
-			role: 'agent',
-			text: 'È un’osservazione importante. Ti aiuta a distinguere tra un cambiamento transitorio e\nun possibile segnale di rischio? Quali altri elementi potresti osservare o approfondire nel tempo\n(per esempio, sul piano relazionale, emotivo o fisico)?',
-			time: '10:28',
-		},
-	]);
+	const messages = ref<ConversationMessage[]>(conversationMessagesMock);
+	
 
-	function sendMessage() {
+	function renderMarkdown(text: string) {
+		const citationPattern = new RegExp('\\uE200filecite\\uE202([^\\uE201]+)\\uE201', 'g');
+		const citationSeparator = String.fromCodePoint(0xE202);
+		const normalizedText = text.replace(citationPattern, (_match, ids: string) => {
+			const filenames = ids
+				.split(citationSeparator)
+				.map((id) => Number(id.match(/file(\d+)$/)?.[1]))
+				.filter((index) => Number.isInteger(index))
+				.map((index) => referenceFiles.value[index]?.filename)
+				.filter((filename): filename is string => Boolean(filename));
+
+			return filenames.length ? ` (${filenames.join(', ')})` : '';
+		});
+
+		return DOMPurify.sanitize(marked.parse(normalizedText, { async: false }));
+	}
+
+	function renderMarkdownLegacy(text: string) {
+		const normalizedText = text.replace(/filecite([^]+)/g, (_match, ids: string) => {
+			const filenames = ids
+				.split('')
+				.map((id) => Number(id.match(/file(\d+)$/)?.[1]))
+				.filter((index) => Number.isInteger(index))
+				.map((index) => referenceFiles.value[index]?.filename)
+				.filter((filename): filename is string => Boolean(filename));
+
+			return filenames.length ? ` (${filenames.join(', ')})` : '';
+		});
+
+		return DOMPurify.sanitize(marked.parse(normalizedText, { async: false }));
+	}
+
+	function formatMessageTime(value: string) {
+		if (/^\d{2}:\d{2}$/.test(value)) return value;
+		const date = new Date(value);
+		return Number.isNaN(date.getTime())
+			? value
+			: date.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
+	}
+
+	async function sendMessage() {
 		const text = draft.value.trim();
-		if (!text) return;
+		if (!text || isTyping.value) return;
 
 		// Svuota subito la textarea dopo l'invio.
 		draft.value = '';
 		appStore.addConversationMessage({ role: 'user', text, time: '10:31' });
 		messages.value.push({ role: 'user', text, time: '10:31' });
 		isTyping.value = true;
-		nextTick(() =>
-			setTimeout(() => {
-				messages.value.push({
-					role: 'agent',
-					text: 'Grazie per aver condiviso questa osservazione. Proviamo a raccogliere altri elementi prima di formulare un’ipotesi.',
-					time: '10:32',
-				});
-				isTyping.value = false;
-			}, 900),
-		);
+
+		try {
+			const response = await $fetch<MessageResponse>('/api/messages', {
+				method: 'POST',
+				body: { message: text, conversationId: conversationId.value },
+			});
+			conversationId.value = response.conversationId;
+			messages.value.push(response.message);
+			appStore.setReferenceFiles(response.referenceFiles);
+			appStore.addConversationMessage(response.message);
+		} catch (error: any) {
+			messages.value.push({
+				role: 'agent',
+				text: `**Non riesco a completare la richiesta.** ${error?.data?.statusMessage || error?.message || 'Riprova tra poco.'}`,
+				time: new Date().toISOString(),
+			});
+		} finally {
+			isTyping.value = false;
+		}
+	}
+
+	async function clearConversation() {
+		messages.value = [];
+		conversationId.value = undefined;
+		isTyping.value = false;
+		appStore.clearConversationMessages();
+
+		try {
+			await $fetch('/api/messages', { method: 'DELETE' });
+		} catch (error) {
+			console.error('Impossibile cancellare la conversazione sul server', error);
+		}
 	}
 
 	async function scrollMessagesToBottom() {
@@ -93,6 +147,14 @@
 			>
 				Guida al dialogo
 			</v-btn>
+			<v-btn
+				class="clear-conversation-button"
+				variant="text"
+				icon="mdi-delete-sweep-outline"
+				aria-label="Cancella conversazione"
+				title="Cancella conversazione"
+				@click="clearConversation"
+			/>
 		</v-card-title>
 
 		<v-card-text ref="messagesArea" class="messages-area">
@@ -111,7 +173,8 @@
 					<v-icon size="38">mdi-robot-outline</v-icon>
 				</v-avatar>
 				<v-sheet class="message-bubble" color="transparent">
-					<span
+					<div v-if="message.role === 'agent'" class="markdown-body" v-html="renderMarkdown(message.text)" />
+					<span v-else
 						v-for="(line, lineIndex) in message.text.split('\n')"
 						:key="lineIndex"
 						>{{ line
@@ -120,7 +183,7 @@
 								lineIndex < message.text.split('\n').length - 1
 							"
 					/></span>
-					<time>{{ message.time }}</time>
+					<time>{{ formatMessageTime(message.time) }}</time>
 				</v-sheet>
 				<v-avatar
 					v-if="message.role === 'user'"
@@ -272,6 +335,11 @@
 		font-size: 26px;
 	}
 
+	.clear-conversation-button {
+		flex: 0 0 auto;
+		color: #b3261e;
+	}
+
 	.messages-area {
 		height: 0;
 		flex: 1 1 0;
@@ -328,6 +396,43 @@
 		font-size: 16px;
 		font-weight: 600;
 		line-height: 1.38;
+	}
+
+	.markdown-body :deep(p) {
+		margin: 0 0 0.65em;
+	}
+
+	.markdown-body :deep(p:last-child) {
+		margin-bottom: 0;
+	}
+
+	.markdown-body :deep(strong) {
+		font-weight: 800;
+	}
+
+	.markdown-body :deep(ul),
+	.markdown-body :deep(ol) {
+		margin: 0.45em 0 0.65em 1.2em;
+		padding: 0;
+	}
+
+	.markdown-body :deep(li + li) {
+		margin-top: 0.25em;
+	}
+
+	.markdown-body :deep(h3),
+	.markdown-body :deep(h4) {
+		margin: 0.65em 0 0.35em;
+		color: #102c7f;
+		font-size: 1em;
+		font-weight: 800;
+	}
+
+	.markdown-body :deep(blockquote) {
+		margin: 0.6em 0;
+		padding-left: 0.8em;
+		border-left: 3px solid #b8c9f0;
+		color: #526384;
 	}
 
 	.user .message-bubble {

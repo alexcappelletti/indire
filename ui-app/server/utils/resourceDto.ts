@@ -3,6 +3,7 @@ import type { Resource } from '#shared/types/resources';
 type ResourceRecord = {
 	_id: unknown;
 	title: string;
+	filename: string;
 	author: string;
 	relevance?: number;
 	kind: Resource['kind'];
@@ -17,6 +18,7 @@ export function toResourceDto(resource: ResourceRecord): Resource {
 	return {
 		id,
 		title: resource.title,
+		filename: resource.filename,
 		author: resource.author,
 		relevance: resource.relevance ?? 0,
 		kind: resource.kind,

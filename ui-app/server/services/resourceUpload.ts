@@ -76,7 +76,7 @@ export async function uploadPdfResource(
 			mimeType: 'application/pdf',
 			sizeBytes: input.buffer.length,
 			gridFsFileId: uploadStream.id,
-			isPublished: false,
+			isPublished: true,
 		});
 
 		return toResourceDto(resource.toObject());

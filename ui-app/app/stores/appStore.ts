@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import type { AuthUser } from '#shared/types/auth';
 import type { ConversationMessage } from '#shared/types/conversation';
+import type { ReferenceFile } from '#shared/types/api';
 
 export const useAppStore = defineStore('appStore', () => {
 	const error = ref<string | null>(null);
@@ -8,6 +9,7 @@ export const useAppStore = defineStore('appStore', () => {
 	const isLoggedIn = ref(false);
 	const authUser = ref<AuthUser | null>(null);
 	const conversationMessages = ref<ConversationMessage[]>([]);
+	const referenceFiles = ref<ReferenceFile[]>([]);
 
 	function setError(err: string | null) {
 		if (err) {
@@ -17,6 +19,15 @@ export const useAppStore = defineStore('appStore', () => {
 
 	function addConversationMessage(message: ConversationMessage) {
 		conversationMessages.value.push(message);
+	}
+
+	function clearConversationMessages() {
+		conversationMessages.value = [];
+		referenceFiles.value = [];
+	}
+
+	function setReferenceFiles(files: ReferenceFile[]) {
+		referenceFiles.value = files;
 	}
 
 	function setLoggedIn(value: boolean) {
@@ -52,5 +63,8 @@ export const useAppStore = defineStore('appStore', () => {
 		logout,
 		conversationMessages,
 		addConversationMessage,
+		clearConversationMessages,
+		referenceFiles,
+		setReferenceFiles,
 	};
 });

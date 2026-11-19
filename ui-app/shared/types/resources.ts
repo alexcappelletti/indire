@@ -3,6 +3,7 @@ export type ResourceKind = 'pdf' | 'presentation';
 export type Resource = {
 	id: string;
 	title: string;
+	filename: string;
 	author: string;
 	relevance: number;
 	kind: ResourceKind;

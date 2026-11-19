@@ -81,7 +81,7 @@ async function uploadPdf({ bucket, db, filePath, relativePath, author, targetFol
 
 	try {
 		const now = new Date();
-		await db.collection('resources').insertOne({
+		await db.collection('resourceBucket').insertOne({
 			title,
 			author,
 			kind: 'pdf',
@@ -91,7 +91,7 @@ async function uploadPdf({ bucket, db, filePath, relativePath, author, targetFol
 			sizeBytes: buffer.length,
 			gridFsFileId: uploadStream.id,
 			relevance: 0,
-			isPublished: false,
+			isPublished: true,
 			createdAt: now,
 			updatedAt: now,
 		});
@@ -118,7 +118,7 @@ if ((!filePath && !folderPath) || (filePath && folderPath)) {
 
 const mongoUri = process.env.MONGODB_URI;
 const dbName = process.env.MONGODB_DB_NAME;
-const bucketName = process.env.GRIDFS_BUCKET_NAME || 'resources';
+const bucketName = process.env.GRIDFS_BUCKET_NAME || 'resourceBucket';
 if (!mongoUri || !dbName) {
 	throw new Error('Configura MONGODB_URI e MONGODB_DB_NAME nel file .env');
 }

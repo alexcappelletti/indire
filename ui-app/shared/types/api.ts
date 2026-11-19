@@ -8,6 +8,24 @@ export type ConversationResponse = {
 	isTyping: boolean;
 };
 
+export type MessageRequest = {
+	message: string;
+	conversationId?: string;
+};
+
+export type ReferenceFile = {
+	relevance: number;
+	title: string;
+	filename: string;
+};
+
+export type MessageResponse = {
+	message: ConversationMessage;
+	conversationId: string;
+	responseId: string;
+	referenceFiles: ReferenceFile[];
+};
+
 export type ResourcesResponse = {
 	items: Resource[];
 	total: number;

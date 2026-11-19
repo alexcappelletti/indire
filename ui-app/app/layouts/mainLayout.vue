@@ -1,7 +1,7 @@
 <script setup lang="ts">
 	import { useRoute } from 'vue-router';
 	import { useAppStore } from '@/stores/appStore';
-	import { mainNavigation as navigation } from '#shared/data/navigation';
+	import { mainNavigation as navigation } from '#shared/navigation';
 
 	const route = useRoute();
 	const appStore = useAppStore();
@@ -50,7 +50,12 @@
 						}}</span>
 						<span>{{ item.label }}</span>
 					</NuxtLink>
-					<button class="profile-button" aria-label="Esci" title="Esci" @click="handleLogout">
+					<button
+						class="profile-button"
+						aria-label="Esci"
+						title="Esci"
+						@click="handleLogout"
+					>
 						<span class="material-symbols-rounded">logout</span>
 					</button>
 				</nav>

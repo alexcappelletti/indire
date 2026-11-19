@@ -1,6 +1,6 @@
 <script setup lang="ts">
 	import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
-	import { mockResources } from '#shared/mocks/resources';
+	import { resourcesMock } from '#shared/mocks/resourcesMock';
 	import type { ResourcesResponse } from '#shared/types/api';
 	import type { Resource } from '#shared/types/resources';
 
@@ -20,11 +20,14 @@
 
 	function filterMockResources() {
 		const normalizedSearch = search.value.trim().toLocaleLowerCase();
-		return mockResources.filter((resource) => {
-			const textMatches = !normalizedSearch ||
+		return resourcesMock.filter((resource) => {
+			const textMatches =
+				!normalizedSearch ||
 				[resource.title, resource.author, resource.folderPath]
 					.filter(Boolean)
-					.some((value) => value!.toLocaleLowerCase().includes(normalizedSearch));
+					.some((value) =>
+						value!.toLocaleLowerCase().includes(normalizedSearch),
+					);
 			const createdAt = resource.createdAt?.slice(0, 10) || '';
 			const fromMatches = !dateFrom.value || createdAt >= dateFrom.value;
 			const toMatches = !dateTo.value || createdAt <= dateTo.value;
@@ -60,9 +63,13 @@
 			if (page.value === 1) {
 				resources.value = filterMockResources();
 				hasMore.value = false;
-				errorMessage.value = 'Database non disponibile: visualizzati i dati dimostrativi.';
+				errorMessage.value =
+					'Database non disponibile: visualizzati i dati dimostrativi.';
 			} else {
-				errorMessage.value = error instanceof Error ? error.message : 'Impossibile caricare altre risorse.';
+				errorMessage.value =
+					error instanceof Error
+						? error.message
+						: 'Impossibile caricare altre risorse.';
 			}
 		} finally {
 			isLoading.value = false;
@@ -77,7 +84,9 @@
 
 	function formatDate(value?: string) {
 		if (!value) return 'Data non disponibile';
-		return new Intl.DateTimeFormat('it-IT', { dateStyle: 'medium' }).format(new Date(value));
+		return new Intl.DateTimeFormat('it-IT', { dateStyle: 'medium' }).format(
+			new Date(value),
+		);
 	}
 
 	function formatBytes(value?: number) {
@@ -118,7 +127,11 @@
 			<div>
 				<p class="eyebrow">BIBLIOTECA DELLA PIATTAFORMA</p>
 				<h1>Risorse</h1>
-				<p>Materiali, guide e approfondimenti per sostenere la prevenzione e la lettura professionale del disagio giovanile.</p>
+				<p>
+					Materiali, guide e approfondimenti per sostenere la
+					prevenzione e la lettura professionale del disagio
+					giovanile.
+				</p>
 			</div>
 		</div>
 
@@ -132,9 +145,26 @@
 				clearable
 				hide-details
 			/>
-			<v-text-field v-model="dateFrom" label="Inserite dal" type="date" variant="outlined" hide-details />
-			<v-text-field v-model="dateTo" label="Inserite fino al" type="date" variant="outlined" hide-details />
-			<v-btn variant="text" prepend-icon="mdi-filter-off" @click="resetFilters">Azzera</v-btn>
+			<v-text-field
+				v-model="dateFrom"
+				label="Inserite dal"
+				type="date"
+				variant="outlined"
+				hide-details
+			/>
+			<v-text-field
+				v-model="dateTo"
+				label="Inserite fino al"
+				type="date"
+				variant="outlined"
+				hide-details
+			/>
+			<v-btn
+				variant="text"
+				prepend-icon="mdi-filter-off"
+				@click="resetFilters"
+				>Azzera</v-btn
+			>
 		</div>
 
 		<v-alert v-if="errorMessage" type="info" variant="tonal" class="mb-4">
@@ -152,20 +182,37 @@
 		</div>
 
 		<div v-else class="resource-cards">
-			<article v-for="resource in resources" :key="resource.id" class="resource-card">
+			<article
+				v-for="resource in resources"
+				:key="resource.id"
+				class="resource-card"
+			>
 				<div class="card-top">
 					<v-icon color="error" size="32">mdi-file-pdf-box</v-icon>
-					<v-chip size="small" color="primary" variant="tonal">{{ kindLabel(resource.kind) }}</v-chip>
+					<v-chip size="small" color="primary" variant="tonal">{{
+						kindLabel(resource.kind)
+					}}</v-chip>
 				</div>
 				<h2>{{ resource.title }}</h2>
 				<p class="resource-author">{{ resource.author }}</p>
 				<div class="resource-details">
-					<span><v-icon size="16">mdi-calendar-outline</v-icon>{{ formatDate(resource.createdAt) }}</span>
-					<span><v-icon size="16">mdi-folder-outline</v-icon>{{ resource.folderPath || 'Risorse' }}</span>
-					<span><v-icon size="16">mdi-file-document-outline</v-icon>{{ formatBytes(resource.sizeBytes) }}</span>
+					<span
+						><v-icon size="16">mdi-calendar-outline</v-icon
+						>{{ formatDate(resource.createdAt) }}</span
+					>
+					<span
+						><v-icon size="16">mdi-folder-outline</v-icon
+						>{{ resource.folderPath || 'Risorse' }}</span
+					>
+					<span
+						><v-icon size="16">mdi-file-document-outline</v-icon
+						>{{ formatBytes(resource.sizeBytes) }}</span
+					>
 				</div>
 				<div class="resource-card-footer">
-					<span class="tag">{{ resource.relevance }}% pertinente</span>
+					<span class="tag"
+						>{{ resource.relevance }}% pertinente</span
+					>
 					<v-btn
 						:href="resource.url"
 						:disabled="!resource.url"
@@ -180,8 +227,15 @@
 		</div>
 
 		<div ref="loadMoreTarget" class="load-more-state" aria-live="polite">
-			<v-progress-circular v-if="isLoading && resources.length" indeterminate size="24" color="primary" />
-			<span v-else-if="!hasMore && resources.length">Hai visualizzato tutte le risorse.</span>
+			<v-progress-circular
+				v-if="isLoading && resources.length"
+				indeterminate
+				size="24"
+				color="primary"
+			/>
+			<span v-else-if="!hasMore && resources.length"
+				>Hai visualizzato tutte le risorse.</span
+			>
 		</div>
 	</section>
 </template>

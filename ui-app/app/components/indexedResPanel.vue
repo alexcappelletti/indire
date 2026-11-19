@@ -1,7 +1,8 @@
 <script setup lang="ts">
-	import { platformResources } from '#shared/data/resources';
+	import { storeToRefs } from 'pinia';
+	import { useAppStore } from '@/stores/appStore';
 
-	const resources = platformResources; /*
+	const { referenceFiles: resources } = storeToRefs(useAppStore()); /*
 		{
 			title: 'Presentazione – Adolescenza e vulnerabilità ai comportamenti a rischio',
 			author: 'C. Caruso',
@@ -28,6 +29,10 @@
 		</v-card-title>
 
 		<v-card-text class="resources-list">
+			<v-sheet v-if="!resources.length" class="empty-resources" color="transparent">
+				<v-icon size="28" color="#8b9abb">mdi-file-search-outline</v-icon>
+				<span>Le risorse citate appariranno dopo la prima risposta dell’agente.</span>
+			</v-sheet>
 			<v-sheet
 				v-for="resource in resources"
 				:key="resource.title"
@@ -39,7 +44,7 @@
 				>
 				<v-sheet class="resource-copy" color="transparent">
 					<strong>{{ resource.title }}</strong>
-					<span>{{ resource.author }}</span>
+					<span>{{ resource.filename }}</span>
 				</v-sheet>
 				<v-sheet class="resource-relevance" color="transparent">
 					<span>Rilevanza</span>
@@ -71,7 +76,7 @@
 				append-icon="mdi-arrow-right"
 				class="all-resources-button"
 			>
-				Vedi tutte le risorse correlate (12)
+				Vedi tutte le risorse correlate ({{ resources.length }})
 			</v-btn>
 		</v-card-actions>
 	</v-card>
@@ -145,6 +150,18 @@
 		padding: 0 16px;
 		overflow: visible;
 		box-sizing: border-box;
+	}
+
+	.empty-resources {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 8px;
+		min-height: 100px;
+		padding: 16px;
+		color: #526384;
+		font-size: 13px;
+		text-align: center;
 	}
 
 	.resource-item {

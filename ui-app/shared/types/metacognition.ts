@@ -27,3 +27,8 @@ export type MetacognitivePath = {
 	summary: ReflectionSummary;
 	overview: MetacognitiveOverviewItem[];
 };
+
+export type UserMetacognitivePath = {
+	userId: string;
+	path: MetacognitivePath;
+};

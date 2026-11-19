@@ -1,10 +1,7 @@
 <script setup lang="ts">
 	import { onMounted, ref } from 'vue';
 	import { useAppStore } from '@/stores/appStore';
-	import type {
-		GoogleApi,
-		GoogleCredentialResponse,
-	} from '@/types/google';
+	import type { GoogleApi, GoogleCredentialResponse } from '@/types/google';
 
 	declare global {
 		interface Window {
@@ -46,9 +43,8 @@
 			await navigateTo('/home');
 		} catch (error) {
 			errorMessage.value =
-				error instanceof Error
-					? error.message
-					: 'Accesso Google non riuscito.';
+				(error as { data?: { statusMessage?: string } })?.data?.statusMessage ||
+				(error instanceof Error ? error.message : 'Accesso Google non riuscito.');
 		} finally {
 			isLoading.value = false;
 		}

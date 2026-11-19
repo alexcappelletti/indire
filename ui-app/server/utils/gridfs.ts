@@ -2,7 +2,7 @@ import { GridFSBucket } from 'mongodb';
 import type { H3Event } from 'h3';
 import { ensureMongoConnection } from './mongoClient';
 
-export const DEFAULT_GRIDFS_BUCKET = 'resources';
+export const DEFAULT_GRIDFS_BUCKET = 'resourceBucket';
 
 export async function getGridFsBucket(event: H3Event) {
 	const mongoose = await ensureMongoConnection(event);
