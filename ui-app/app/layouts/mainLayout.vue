@@ -1,7 +1,9 @@
 <script setup lang="ts">
+	import { onMounted } from 'vue';
 	import { useRoute } from 'vue-router';
 	import { useAppStore } from '@/stores/appStore';
 	import { mainNavigation as navigation } from '#shared/navigation';
+	import type { AuthUser } from '#shared/types/auth';
 
 	const route = useRoute();
 	const appStore = useAppStore();
@@ -9,6 +11,20 @@
 	function isActive(path: string) {
 		return route.path === path;
 	}
+
+	onMounted(async () => {
+		if (appStore.authUser) return;
+
+		try {
+			const session = await $fetch<{ user: AuthUser | null }>('/api/auth/me');
+			if (session.user) {
+				appStore.setAuthUser(session.user);
+				await appStore.loadUserMetacognitivePath();
+			}
+		} catch {
+			// Nessuna sessione attiva: il layout resta comunque visualizzabile.
+		}
+	});
 
 	async function handleLogout() {
 		await appStore.logout();

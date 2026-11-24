@@ -13,7 +13,11 @@ export default defineNuxtConfig({
 
 	modules: ['@vueuse/nuxt', '@pinia/nuxt', 'vuetify-nuxt-module'],
 
-	css: ['vuetify/styles', '~/assets/css/tailwind.css'],
+	css: [
+		'vuetify/styles',
+		'~/assets/css/tailwind.css',
+		'~/assets/scss/main.scss',
+	],
 
 	runtimeConfig: {
 		sessionSecret: process.env.SESSION_SECRET || '',
@@ -69,22 +73,6 @@ export default defineNuxtConfig({
 		vuetifyOptions: {
 			theme: {
 				defaultTheme: 'light',
-				themes: {
-					light: {
-						colors: {
-							background: '#ffffff',
-							surface: '#ffffff',
-							primary: '#1455c1',
-							secondary: '#424242',
-							info: '#2868d5',
-							success: '#43ab5c',
-							warning: '#f4c12f',
-							error: '#d93b3b',
-							alex: '#aa77b6',
-							ux1: '#c6d0ff',
-						},
-					},
-				},
 			},
 		},
 	},

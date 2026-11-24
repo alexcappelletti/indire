@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import type { AuthUser } from '#shared/types/auth';
 import type { ConversationMessage } from '#shared/types/conversation';
 import type { ReferenceFile } from '#shared/types/api';
+import type { UserMetacognitivePath } from '#shared/types/metacognition';
 
 export const useAppStore = defineStore('appStore', () => {
 	const error = ref<string | null>(null);
@@ -10,6 +11,7 @@ export const useAppStore = defineStore('appStore', () => {
 	const authUser = ref<AuthUser | null>(null);
 	const conversationMessages = ref<ConversationMessage[]>([]);
 	const referenceFiles = ref<ReferenceFile[]>([]);
+	const userMetacognitivePath = ref<UserMetacognitivePath | null>(null);
 
 	function setError(err: string | null) {
 		if (err) {
@@ -37,11 +39,20 @@ export const useAppStore = defineStore('appStore', () => {
 	function setAuthUser(user: AuthUser) {
 		authUser.value = user;
 		isLoggedIn.value = true;
+		userMetacognitivePath.value = null;
+	}
+
+	async function loadUserMetacognitivePath() {
+		if (!authUser.value) return;
+		userMetacognitivePath.value = await $fetch<UserMetacognitivePath>(
+			'/api/metacognitive-path',
+		);
 	}
 
 	async function logout() {
 		authUser.value = null;
 		isLoggedIn.value = false;
+		userMetacognitivePath.value = null;
 
 		try {
 			await $fetch('/api/auth/logout', { method: 'POST' });
@@ -66,5 +77,7 @@ export const useAppStore = defineStore('appStore', () => {
 		clearConversationMessages,
 		referenceFiles,
 		setReferenceFiles,
+		userMetacognitivePath,
+		loadUserMetacognitivePath,
 	};
 });

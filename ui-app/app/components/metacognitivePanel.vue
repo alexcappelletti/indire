@@ -1,7 +1,13 @@
 <script setup lang="ts">
-	import { metacognitivePathMock } from '#shared/mocks/learningMock';
+	import { computed } from 'vue';
+	import { storeToRefs } from 'pinia';
+	import { useAppStore } from '@/stores/appStore';
 
-	const { steps } = metacognitivePathMock;
+	const { userMetacognitivePath } = storeToRefs(useAppStore());
+	const path = computed(() => userMetacognitivePath.value?.path);
+	const steps = computed(() => path.value?.steps ?? []);
+	const summary = computed(() => path.value?.summary);
+	const overview = computed(() => path.value?.overview ?? []);
 </script>
 
 <template>
@@ -12,7 +18,7 @@
 	>
 		<v-card-title class="panel-header">
 			<v-avatar class="header-icon" size="55" color="transparent">
-				<v-icon size="52" color="#243fc9">mdi-head-cog-outline</v-icon>
+				<v-icon size="52" color="primary">mdi-head-cog-outline</v-icon>
 			</v-avatar>
 			<h2 id="metacognitive-title">Il tuo percorso metacognitivo</h2>
 			<v-tooltip text="Informazioni sul percorso">
@@ -21,7 +27,7 @@
 						v-bind="props"
 						class="info-icon"
 						size="22"
-						color="#3159bf"
+						color="primary"
 						>mdi-information-outline</v-icon
 					>
 				</template>
@@ -35,7 +41,7 @@
 						<h3 id="map-title">
 							Tappe del ragionamento professionale (Mappa)
 						</h3>
-						<v-icon size="20" color="#3159bf"
+						<v-icon size="20" color="primary"
 							>mdi-information-outline</v-icon
 						>
 					</v-sheet>
@@ -69,20 +75,14 @@
 				<v-col cols="12" lg="3" class="reflection-summary">
 					<v-card elevation="0" class="summary-card">
 						<v-card-title class="summary-title">
-							<v-icon size="27" color="#1855c1"
+							<v-icon size="27" color="primary"
 								>mdi-file-document-outline</v-icon
 							>
 							<h3 id="summary-title">
 								Sintesi provvisoria della tua riflessione
 							</h3>
 						</v-card-title>
-						<v-card-text>
-							Hai osservato più segnali (isolamento, assenze) e
-							formulato un'ipotesi di disagio, considerando anche
-							l'ipotesi alternativa di un cambiamento fisiologico.
-							Stai ampliando la raccolta di elementi per
-							confronto.
-						</v-card-text>
+						<v-card-text>{{ summary?.text || 'Nessuna sintesi disponibile.' }}</v-card-text>
 					</v-card>
 				</v-col>
 
@@ -93,47 +93,26 @@
 					aria-labelledby="overview-title"
 				>
 					<v-sheet class="overview-title" color="transparent">
-						<v-icon size="34" color="#174fc0">mdi-target</v-icon>
+						<v-icon size="34" color="primary">mdi-target</v-icon>
 						<h3 id="overview-title">A colpo d'occhio</h3>
 					</v-sheet>
-					<v-sheet class="overview-item explored" color="transparent">
-						<v-avatar class="status-icon" size="29" color="#41b95c"
-							><v-icon size="19">mdi-check</v-icon></v-avatar
-						>
-						<v-card-text class="overview-copy"
-							><strong>Dimensioni esplorate: 3</strong><br /><span
-								>(osservazione, organizzazione, ipotesi)</span
-							></v-card-text
-						>
+					<v-sheet
+						v-for="item in overview"
+						:key="item.label"
+						class="overview-item"
+						:class="item.state"
+						color="transparent"
+					>
+						<v-avatar class="status-icon" size="29" color="transparent">
+							<v-icon v-if="item.state === 'completed'" size="19">mdi-check</v-icon>
+							<span v-else-if="item.state === 'question'">?</span>
+						</v-avatar>
+						<v-card-text class="overview-copy">
+							<strong>{{ item.label }}</strong><br />
+							<span>{{ item.detail }}</span>
+						</v-card-text>
 					</v-sheet>
-					<v-sheet class="overview-item pending" color="transparent">
-						<v-avatar
-							class="status-icon"
-							size="29"
-							color="transparent"
-						/>
-						<v-card-text class="overview-copy"
-							><strong>Da approfondire: 2</strong><br /><span
-								>(condivisione, rete)</span
-							></v-card-text
-						>
-					</v-sheet>
-					<v-sheet class="overview-item question" color="transparent">
-						<v-avatar
-							class="status-icon"
-							size="29"
-							color="transparent"
-							>?</v-avatar
-						>
-						<v-card-text class="overview-copy"
-							><strong>Domanda ancora aperta</strong><br /><span
-								>Quali ulteriori evidenze, scolastiche o
-								relazionali,<br class="wide-only" />
-								possono aiutarti a discriminare tra le
-								ipotesi?</span
-							></v-card-text
-						>
-					</v-sheet>
+					
 				</v-col>
 			</v-row>
 		</v-card-text>
@@ -143,12 +122,12 @@
 <style scoped lang="scss">
 	.metacognitive-panel {
 		margin-top: 20px;
-		border: 2px solid #dce5fa;
+		border: 2px solid var(--indire-border);
 		border-radius: 22px;
 		overflow: hidden;
-		background: #fff;
-		box-shadow: 0 3px 12px #294c9912;
-		color: #12245d;
+		background: var(--indire-white);
+		box-shadow: $shadow-card;
+		color: var(--indire-ink);
 	}
 
 	.panel-header {
@@ -157,7 +136,12 @@
 		gap: 15px;
 		min-height: 70px;
 		padding: 8px 32px;
-		background: linear-gradient(90deg, #edf2ff, #e6edff 55%, #f3f6ff);
+		background: linear-gradient(
+			90deg,
+			var(--indire-blue-soft),
+			var(--indire-blue-soft) 55%,
+			var(--indire-white)
+		);
 	}
 
 	.header-icon {
@@ -165,7 +149,7 @@
 		height: 55px;
 		display: grid;
 		place-items: center;
-		color: #243fc9;
+		color: var(--indire-primary);
 	}
 
 	.header-icon span {
@@ -179,7 +163,7 @@
 	}
 
 	.panel-header h2 {
-		color: #102b80;
+		color: var(--indire-navy);
 		font-size: 21px;
 		font-weight: 800;
 	}
@@ -189,9 +173,9 @@
 		place-items: center;
 		width: 22px;
 		height: 22px;
-		border: 2px solid #5874ca;
+		border: 2px solid var(--indire-primary);
 		border-radius: 50%;
-		color: #3159bf;
+		color: var(--indire-primary);
 		font-size: 14px;
 		font-weight: 800;
 	}
@@ -219,7 +203,7 @@
 
 	.reflection-summary,
 	.overview {
-		border-left: 2px solid #cbd4e8;
+		border-left: 2px solid var(--indire-border);
 	}
 
 	.section-title-row,
@@ -233,7 +217,7 @@
 	.section-title-row h3,
 	.summary-title h3,
 	.overview-title h3 {
-		color: #102b80;
+		color: var(--indire-navy);
 		font-size: 16px;
 		font-weight: 800;
 		line-height: 1.2;
@@ -253,7 +237,7 @@
 		right: 22px;
 		top: 18px;
 		height: 3px;
-		background: #bcc7dc;
+		background: var(--indire-border);
 	}
 
 	.step {
@@ -270,8 +254,8 @@
 		place-items: center;
 		margin: 0 auto;
 		border-radius: 50%;
-		background: #e9ecf2;
-		color: #17203e;
+		background: var(--indire-blue-soft);
+		color: var(--indire-ink);
 		font-size: 17px;
 		font-weight: 700;
 	}
@@ -280,13 +264,13 @@
 		font-size: 21px;
 	}
 	.step.completed .step-marker {
-		background: #41b95c;
-		color: #fff;
+		background: rgb(var(--v-theme-primary));
+		color: var(--indire-white);
 	}
 	.step.current .step-marker {
-		border: 2px solid #2560d4;
-		background: #fff;
-		color: #124eba;
+		border: 2px solid var(--indire-primary);
+		background: var(--indire-white);
+		color: var(--indire-primary);
 	}
 	.step-number {
 		margin-top: 7px;
@@ -310,10 +294,10 @@
 	.reflection-summary .summary-title {
 		padding: 10px 20px;
 		border-radius: 15px 15px 0 0;
-		background: #e8edff;
+		background: var(--indire-blue-soft);
 	}
 	.summary-title span {
-		color: #1855c1;
+		color: var(--indire-primary);
 		font-size: 27px;
 	}
 	.summary-card {
@@ -324,8 +308,8 @@
 	.summary-card > .v-card-text {
 		padding: 13px 18px;
 		border-radius: 0 0 15px 15px;
-		background: #f0f3ff;
-		color: #12245d;
+		background: var(--indire-blue-soft);
+		color: var(--indire-ink);
 		font-size: 13px;
 		line-height: 1.42;
 		font-weight: 600;
@@ -335,7 +319,7 @@
 		margin-bottom: 10px;
 	}
 	.target-icon {
-		color: #174fc0;
+		color: var(--indire-primary);
 		font-size: 34px;
 	}
 	.overview-item {
@@ -348,7 +332,7 @@
 	}
 	.overview-item .overview-copy {
 		padding: 0;
-		color: #17254d;
+		color: var(--indire-ink);
 		font-size: 12px;
 		line-height: 1.25;
 	}
@@ -366,17 +350,17 @@
 		flex: 0 0 29px;
 		border-radius: 50%;
 	}
-	.explored .status-icon {
-		background: #41b95c;
-		color: #fff;
+	.completed .status-icon {
+		background: rgb(var(--v-theme-primary));
+		color: var(--indire-white);
 		font-size: 19px;
 	}
 	.pending .status-icon {
-		border: 2px solid #aeb9d2;
+		border: 2px solid var(--indire-muted);
 	}
 	.question .status-icon {
-		border: 2px solid #2560d4;
-		color: #2560d4;
+		border: 2px solid var(--indire-primary);
+		color: var(--indire-primary);
 		font-size: 18px;
 		font-weight: 700;
 	}
@@ -384,7 +368,7 @@
 	@media (max-width: 1100px) {
 		.overview {
 			border-left: 0;
-			border-top: 2px solid #cbd4e8;
+			border-top: 2px solid var(--indire-border);
 			padding-top: 18px;
 		}
 	}
@@ -410,7 +394,7 @@
 			margin-top: 22px;
 			padding-top: 22px;
 			border-left: 0;
-			border-top: 2px solid #cbd4e8;
+			border-top: 2px solid var(--indire-border);
 		}
 		.steps-track {
 			overflow-x: auto;

@@ -52,7 +52,11 @@ async function resolveConversationId(
 
 	if (storedConversation?.conversationId) return storedConversation.conversationId;
 
-	const conversation = await client.conversations.create();
+	const conversation = await client.conversations.create({
+		metadata: {
+			user_id: userId,
+		},
+	});
 	return conversation.id;
 }
 
@@ -116,6 +120,7 @@ export async function createAgentMessage(
 	type SearchResult = {
 		filename?: string;
 		score?: number;
+		text?: string;
 		attributes?: Record<string, string | number | boolean> | null;
 	};
 
@@ -167,6 +172,9 @@ export async function createAgentMessage(
 				: -1;
 		if (existing) {
 			existing.relevance = Math.max(existing.relevance, relevance);
+			if (!existing.highlight && result.text?.trim()) {
+				existing.highlight = result.text.trim();
+			}
 			return files;
 		}
 		const resource = resourceByFilename.get(result.filename);
@@ -175,6 +183,7 @@ export async function createAgentMessage(
 			relevance,
 			title: resource?.title || (typeof metadataTitle === 'string' ? metadataTitle : result.filename),
 			filename: result.filename,
+			highlight: result.text?.trim() || '',
 		});
 		return files;
 	}, []);

@@ -1,17 +1,31 @@
 // Design tokens condivisi dell'applicazione.
 
+@use 'sass:color';
+
+@function rgb-channels($value) {
+	@return color.channel($value, 'red', $space: rgb),
+		color.channel($value, 'green', $space: rgb),
+		color.channel($value, 'blue', $space: rgb);
+}
+
 $font-family-base: 'Roboto', 'Segoe UI', Arial, sans-serif;
 $font-family-mono: 'Fira Code', Consolas, monospace;
 
 $color-white: #ffffff;
+$color-primary: #1455c1;
+$color-secondary: #424242;
+$color-info: #2868d5;
 $color-ink: #13214d;
 $color-navy: #102c7f;
 $color-blue: #1554be;
 $color-blue-soft: #eef3ff;
 $color-border: #dce5fa;
 $color-muted: #526384;
-$color-success: #45b95d;
-$color-warning: #f6bd2d;
+$color-success: #43ab5c;
+$color-warning: #f4c12f;
+$color-error: #d93b3b;
+$color-alex: #aa77b6;
+$color-ux1: #c6d0ff;
 
 $text-xs: 0.75rem;
 $text-sm: 0.875rem;

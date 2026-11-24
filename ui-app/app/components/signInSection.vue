@@ -40,6 +40,7 @@
 				body: { credential: response.credential },
 			});
 			appStore.setAuthUser(user);
+			await appStore.loadUserMetacognitivePath();
 			await navigateTo('/home');
 		} catch (error) {
 			errorMessage.value =
@@ -55,6 +56,7 @@
 			const session = await $fetch('/api/auth/me');
 			if (session.user) {
 				appStore.setAuthUser(session.user);
+				await appStore.loadUserMetacognitivePath();
 				return;
 			}
 		} catch {

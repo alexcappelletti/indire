@@ -14,7 +14,7 @@
 	const isTyping = ref(false);
 	const conversationId = ref<string>();
 	const appStore = useAppStore();
-	const { referenceFiles } = storeToRefs(appStore);
+	const { authUser, referenceFiles } = storeToRefs(appStore);
 
 	const messagesArea = ref<{ $el?: HTMLElement } | HTMLElement | null>(null);
 	const messages = ref<ConversationMessage[]>(conversationMessagesMock);
@@ -190,7 +190,13 @@
 					class="message-avatar user-avatar"
 					size="66"
 				>
-					<v-icon size="38">mdi-account</v-icon>
+					<v-img
+						v-if="authUser?.picture"
+						:src="authUser.picture"
+						:alt="authUser.name"
+						cover
+					/>
+					<v-icon v-else size="38">mdi-account</v-icon>
 				</v-avatar>
 			</v-sheet>
 			<v-sheet
@@ -385,6 +391,13 @@
 	.user-avatar {
 		color: #1d5dc0;
 		background: #e5edff;
+	}
+
+	.user-avatar :deep(.v-img) {
+		width: 100%;
+		height: 100%;
+		border-radius: 50%;
+		overflow: hidden;
 	}
 
 	.message-bubble {

@@ -1,9 +1,8 @@
 <script setup lang="ts">
 	import { storeToRefs } from 'pinia';
-	import signInSection from '@/components/signInSection.vue';
 	import { useAppStore } from '@/stores/appStore';
 
-	const { isLoggedIn } = storeToRefs(useAppStore());
+	const { isLoggedIn, authUser } = storeToRefs(useAppStore());
 
 	definePageMeta({
 		layout: 'main-layout',
@@ -17,19 +16,21 @@
 				<span class="material-symbols-rounded big-icon">home</span>
 				<div>
 					<p class="eyebrow">PIATTAFORMA INDIRE</p>
-					<h1>Benvenuto nella tua area docente</h1>
+					<h1>
+						Benvenuto{{ authUser?.name ? `, ${authUser.name}` : '' }}
+					</h1>
 					<p>
-						Riprendi il percorso di riflessione sul disagio
-						giovanile e trova rapidamente gli strumenti per
-						accompagnare i tuoi studenti.
+						Questa è la tua area docente. Continua il percorso di
+						riflessione sul disagio giovanile e trova rapidamente gli
+						strumenti per accompagnare i tuoi studenti.
 					</p>
 				</div>
 			</div>
 			<div class="quick-grid">
-				<NuxtLink to="/"
+				<NuxtLink to="/conversationPage"
 					><span class="material-symbols-rounded">forum</span
 					><strong>Continua il dialogo</strong
-					><small>Riprendi dalla situazione </small></NuxtLink
+					><small>Avvia o continua una riflessione</small></NuxtLink
 				><NuxtLink to="/risorse"
 					><span class="material-symbols-rounded">folder_open</span
 					><strong>Esplora le risorse</strong

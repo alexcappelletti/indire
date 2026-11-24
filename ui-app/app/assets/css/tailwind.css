@@ -4,8 +4,19 @@
 @source "../../";
 
 @theme {
-	--color-indire-navy: #0d2d80;
-	--color-indire-blue: #1455c1;
-	--color-indire-soft: #eef3ff;
-	--color-indire-ink: #13214d;
+	--color-primary: var(--indire-primary);
+	--color-secondary: var(--indire-secondary);
+	--color-info: var(--indire-info);
+	--color-success: var(--indire-success);
+	--color-warning: var(--indire-warning);
+	--color-error: var(--indire-error);
+	--color-indire-white: var(--indire-white);
+	--color-indire-navy: var(--indire-navy);
+	--color-indire-blue: var(--indire-blue);
+	--color-indire-soft: var(--indire-blue-soft);
+	--color-indire-ink: var(--indire-ink);
+	--color-indire-border: var(--indire-border);
+	--color-indire-muted: var(--indire-muted);
+	--color-indire-alex: var(--indire-alex);
+	--color-indire-ux1: var(--indire-ux1);
 }

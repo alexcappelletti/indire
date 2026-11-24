@@ -5,3 +5,10 @@ export type ConversationMessage = {
 	text: string;
 	time: string;
 };
+
+export type ConversationSession = {
+	userId: string;
+	conversationId: string;
+	lastResponseId?: string;
+	messages: ConversationMessage[];
+};

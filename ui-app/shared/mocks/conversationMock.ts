@@ -1,5 +1,9 @@
-import type { ConversationMessage } from '#shared/types/conversation';
+import type {
+	ConversationMessage,
+	ConversationSession,
+} from '#shared/types/conversation';
 import type { ConversationResponse } from '#shared/types/api';
+import { authUserMock } from './authMock';
 
 export const conversationMessagesMock: ConversationMessage[] = [
 	{
@@ -8,6 +12,13 @@ export const conversationMessagesMock: ConversationMessage[] = [
 		time: '10:24',
 	},
 ];
+
+export const conversationSessionMock: ConversationSession = {
+	userId: authUserMock.sub,
+	conversationId: 'mock-conversation-001',
+	lastResponseId: 'mock-response-001',
+	messages: conversationMessagesMock,
+};
 
 export const conversationResponseMock: ConversationResponse = {
 	messages: conversationMessagesMock,

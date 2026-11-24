@@ -10,6 +10,10 @@
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 	--indire-ink: #{$color-ink};
+	--indire-white: #{$color-white};
+	--indire-primary: #{$color-primary};
+	--indire-secondary: #{$color-secondary};
+	--indire-info: #{$color-info};
 	--indire-navy: #{$color-navy};
 	--indire-blue: #{$color-blue};
 	--indire-blue-soft: #{$color-blue-soft};
@@ -17,6 +21,21 @@
 	--indire-muted: #{$color-muted};
 	--indire-success: #{$color-success};
 	--indire-warning: #{$color-warning};
+	--indire-error: #{$color-error};
+	--indire-alex: #{$color-alex};
+	--indire-ux1: #{$color-ux1};
+}
+
+// Mappatura dei token applicativi sui token cromatici utilizzati da Vuetify.
+.v-theme--light {
+	--v-theme-background: 255, 255, 255;
+	--v-theme-surface: 255, 255, 255;
+	--v-theme-primary: #{rgb-channels($color-primary)};
+	--v-theme-secondary: #{rgb-channels($color-secondary)};
+	--v-theme-info: #{rgb-channels($color-info)};
+	--v-theme-success: #{rgb-channels($color-success)};
+	--v-theme-warning: #{rgb-channels($color-warning)};
+	--v-theme-error: #{rgb-channels($color-error)};
 }
 
 *,

@@ -3,6 +3,7 @@ import { setSessionCookie, type SessionUser } from '../../utils/auth-session'
 import { ensureMongoConnection } from '../../utils/mongoClient'
 import { AuthorizedUserModel } from '../../models/authorizedUser'
 import { enforceRateLimit } from '../../utils/rateLimit'
+import { getOrCreateUserMetacognitivePath } from '../../services/metacognitivePath'
 
 export default defineEventHandler(async (event) => {
 	enforceRateLimit(event, `google-login:${getRequestIP(event) || 'unknown'}`, 10, 15 * 60_000)
@@ -37,6 +38,8 @@ export default defineEventHandler(async (event) => {
 			statusMessage: 'Il tuo account Google non è autorizzato ad accedere alla piattaforma.',
 		})
 	}
+
+	await getOrCreateUserMetacognitivePath(event, payload.sub)
 
 	const user: SessionUser = {
 		sub: payload.sub,

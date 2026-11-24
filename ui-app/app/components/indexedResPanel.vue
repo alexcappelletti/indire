@@ -9,6 +9,10 @@
 			relevance: 68,
 		},
 	*/
+
+	function resourceUrl(filename: string) {
+		return `/api/resources/file?filename=${encodeURIComponent(filename)}`;
+	}
 </script>
 
 <template>
@@ -18,7 +22,7 @@
 				>mdi-folder-outline</v-icon
 			>
 			<div color="transparent" class="resources-heading">
-				<h2>Risorse dalla piattaforma</h2>
+				<h2>Risorse pertinenti</h2>
 				<p>
 					Materiali consigliati dall'agente in relazione al tuo
 					dialogo. La rilevanza indica quanto il materiale è
@@ -45,6 +49,9 @@
 				<v-sheet class="resource-copy" color="transparent">
 					<strong>{{ resource.title }}</strong>
 					<span>{{ resource.filename }}</span>
+					<span v-if="resource.highlight" class="resource-highlight">
+						{{ resource.highlight }}
+					</span>
 				</v-sheet>
 				<v-sheet class="resource-relevance" color="transparent">
 					<span>Rilevanza</span>
@@ -58,6 +65,8 @@
 					/>
 				</v-sheet>
 				<v-btn
+					:href="resourceUrl(resource.filename)"
+					target="_blank"
 					icon
 					variant="text"
 					size="small"
@@ -69,16 +78,7 @@
 			</v-sheet>
 		</v-card-text>
 
-		<v-card-actions class="resources-footer">
-			<v-btn
-				variant="text"
-				color="#1554be"
-				append-icon="mdi-arrow-right"
-				class="all-resources-button"
-			>
-				Vedi tutte le risorse correlate ({{ resources.length }})
-			</v-btn>
-		</v-card-actions>
+		
 	</v-card>
 </template>
 
@@ -198,6 +198,18 @@
 		margin-top: 4px;
 		color: #17254d;
 		font-size: 13px;
+	}
+
+	.resource-copy .resource-highlight {
+		display: -webkit-box;
+		margin-top: 5px;
+		color: #526384;
+		font-size: 11px;
+		font-weight: 500;
+		line-height: 1.25;
+		overflow: hidden;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 2;
 	}
 
 	.resource-copy,

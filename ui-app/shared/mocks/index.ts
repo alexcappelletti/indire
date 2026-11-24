@@ -3,6 +3,7 @@ export {
 	agentFollowUpMock,
 	conversationMessagesMock,
 	conversationResponseMock,
+	conversationSessionMock,
 } from './conversationMock';
 export {
 	learningPathMock,

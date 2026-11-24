@@ -17,6 +17,7 @@ export type ReferenceFile = {
 	relevance: number;
 	title: string;
 	filename: string;
+	highlight: string;
 };
 
 export type MessageResponse = {
