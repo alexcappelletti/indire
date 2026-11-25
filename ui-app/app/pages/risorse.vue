@@ -1,5 +1,6 @@
 <script setup lang="ts">
-	import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
+	import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+	import { useElementSize } from '@vueuse/core';
 	import { resourcesMock } from '#shared/mocks/resourcesMock';
 	import type { ResourcesResponse } from '#shared/types/api';
 	import type { Resource } from '#shared/types/resources';
@@ -7,16 +8,49 @@
 	definePageMeta({ layout: 'main-layout' });
 
 	const resources = ref<Resource[]>([]);
+	const resourceContentRef = ref<HTMLElement | null>(null);
+	const { width: contentWidth, height: contentHeight } =
+		useElementSize(resourceContentRef);
 	const search = ref('');
 	const dateFrom = ref('');
 	const dateTo = ref('');
+	const total = ref(0);
 	const page = ref(1);
-	const hasMore = ref(true);
+	const pageSize = computed(() => {
+		const cardWidth = 280;
+		const cardHeight = 280;
+		const gap = 18;
+		const columns = Math.max(
+			1,
+			Math.floor((contentWidth.value + gap) / (cardWidth + gap)),
+		);
+		const rows = Math.max(
+			1,
+			Math.floor((contentHeight.value + gap) / (cardHeight + gap)),
+		);
+
+		return Math.min(50, columns * rows);
+	});
+	const pageCount = computed(() => Math.max(1, Math.ceil(total.value / pageSize.value)));
+	const sortBy = ref<'title' | 'createdAt'>('title');
+	const sortOrder = ref<'asc' | 'desc'>('asc');
 	const isLoading = ref(false);
 	const errorMessage = ref('');
-	const loadMoreTarget = ref<HTMLElement | null>(null);
-	let observer: IntersectionObserver | null = null;
+	const isMounted = ref(false);
 	let filterTimer: ReturnType<typeof setTimeout> | undefined;
+	const sortLabel = computed(() => {
+		if (sortBy.value === 'title') {
+			return sortOrder.value === 'asc' ? 'Titolo A-Z' : 'Titolo Z-A';
+		}
+		return sortOrder.value === 'asc' ? 'Data meno recente' : 'Data più recente';
+	});
+
+	const sortOptions = [
+		{ label: 'Titolo A-Z', sortBy: 'title', sortOrder: 'asc' },
+		{ label: 'Titolo Z-A', sortBy: 'title', sortOrder: 'desc' },
+		{ label: 'Data meno recente', sortBy: 'createdAt', sortOrder: 'asc' },
+		{ label: 'Data più recente', sortBy: 'createdAt', sortOrder: 'desc' },
+	] as const;
 
 	function filterMockResources() {
 		const normalizedSearch = search.value.trim().toLocaleLowerCase();
@@ -35,45 +69,53 @@
 		});
 	}
 
-	async function loadResources(reset = false) {
-		if (isLoading.value || (!reset && !hasMore.value)) return;
-		if (reset) {
-			page.value = 1;
-			hasMore.value = true;
-			resources.value = [];
-			errorMessage.value = '';
-		}
+	async function loadResources(targetPage = 1) {
+		if (isLoading.value) return;
+		if (targetPage < 1 || targetPage > pageCount.value) return;
+
+		page.value = targetPage;
+		resources.value = [];
+		errorMessage.value = '';
 
 		isLoading.value = true;
 		try {
 			const response = await $fetch<ResourcesResponse>('/api/resources', {
 				query: {
 					page: page.value,
-					pageSize: 12,
+					pageSize: pageSize.value,
 					search: search.value || undefined,
 					dateFrom: dateFrom.value || undefined,
 					dateTo: dateTo.value || undefined,
+					sortBy: sortBy.value,
+					sortOrder: sortOrder.value,
 				},
 			});
 
-			resources.value.push(...response.items);
-			hasMore.value = response.hasMore;
-			page.value += 1;
+			resources.value = response.items;
+			total.value = response.total;
 		} catch (error) {
-			if (page.value === 1) {
-				resources.value = filterMockResources();
-				hasMore.value = false;
+			if (!resources.value.length) {
+				const filteredResources = filterMockResources();
+				total.value = filteredResources.length;
+				resources.value = filteredResources.slice(
+					(page.value - 1) * pageSize.value,
+					page.value * pageSize.value,
+				);
 				errorMessage.value =
 					'Database non disponibile: visualizzati i dati dimostrativi.';
 			} else {
 				errorMessage.value =
-					error instanceof Error
-						? error.message
-						: 'Impossibile caricare altre risorse.';
+					error instanceof Error ? error.message : 'Impossibile caricare le risorse.';
 			}
 		} finally {
 			isLoading.value = false;
 		}
+	}
+
+	function applySort(nextSortBy: 'title' | 'createdAt', nextSortOrder: 'asc' | 'desc') {
+		sortBy.value = nextSortBy;
+		sortOrder.value = nextSortOrder;
+		loadResources(1);
 	}
 
 	function resetFilters() {
@@ -99,24 +141,23 @@
 	}
 
 	onMounted(() => {
-		loadResources(true);
-		observer = new IntersectionObserver(
-			(entries) => {
-				if (entries[0]?.isIntersecting) loadResources();
-			},
-			{ rootMargin: '320px' },
-		);
-		if (loadMoreTarget.value) observer.observe(loadMoreTarget.value);
+		isMounted.value = true;
+		loadResources(1);
 	});
 
 	onBeforeUnmount(() => {
-		observer?.disconnect();
 		if (filterTimer) clearTimeout(filterTimer);
 	});
 
 	watch([search, dateFrom, dateTo], () => {
 		if (filterTimer) clearTimeout(filterTimer);
-		filterTimer = setTimeout(() => loadResources(true), 300);
+			filterTimer = setTimeout(() => loadResources(1), 300);
+	});
+
+	watch(pageSize, (nextPageSize, previousPageSize) => {
+		if (isMounted.value && nextPageSize !== previousPageSize) {
+			loadResources(1);
+		}
 	});
 </script>
 
@@ -165,12 +206,36 @@
 				@click="resetFilters"
 				>Azzera</v-btn
 			>
+			<v-menu location="bottom end">
+				<template #activator="{ props }">
+					<v-chip
+						v-bind="props"
+						class="sort-chip"
+						color="primary"
+						variant="tonal"
+						prepend-icon="mdi-sort"
+					>
+						Ordina: {{ sortLabel }}
+					</v-chip>
+				</template>
+				<v-list density="compact">
+					<v-list-item
+						v-for="option in sortOptions"
+						:key="option.label"
+						:active="option.label === sortLabel"
+						@click="applySort(option.sortBy, option.sortOrder)"
+					>
+						<v-list-item-title>{{ option.label }}</v-list-item-title>
+					</v-list-item>
+				</v-list>
+			</v-menu>
 		</div>
 
 		<v-alert v-if="errorMessage" type="info" variant="tonal" class="mb-4">
 			{{ errorMessage }}
 		</v-alert>
 
+		<div ref="resourceContentRef" class="resource-content-scroll">
 		<div v-if="!resources.length && isLoading" class="resources-state">
 			<v-progress-circular indeterminate color="primary" />
 			<span>Caricamento risorse...</span>
@@ -210,9 +275,6 @@
 					>
 				</div>
 				<div class="resource-card-footer">
-					<span class="tag"
-						>{{ resource.relevance }}% pertinente</span
-					>
 					<v-btn
 						:href="resource.url"
 						:disabled="!resource.url"
@@ -226,23 +288,47 @@
 			</article>
 		</div>
 
-		<div ref="loadMoreTarget" class="load-more-state" aria-live="polite">
+		<div class="load-more-state" aria-live="polite">
 			<v-progress-circular
-				v-if="isLoading && resources.length"
+				v-if="isLoading"
 				indeterminate
 				size="24"
 				color="primary"
 			/>
-			<span v-else-if="!hasMore && resources.length"
-				>Hai visualizzato tutte le risorse.</span
-			>
+		</div>
+		</div>
+
+		<div v-if="pageCount > 1" class="resources-pagination">
+			<v-pagination
+				v-model="page"
+				:length="pageCount"
+				:disabled="isLoading"
+				:total-visible="7"
+				@update:model-value="loadResources"
+			/>
 		</div>
 	</section>
 </template>
 
 <style scoped lang="scss">
 	.resources-page {
-		padding-bottom: 32px;
+		width: 100%;
+		max-width: none;
+		height: calc(100vh - 88px);
+		min-height: calc(100vh - 88px);
+		box-sizing: border-box;
+		display: flex;
+		flex-direction: column;
+		overflow: hidden;
+		padding: 28px clamp(24px, 4vw, 64px) 32px;
+	}
+
+	.resource-content-scroll {
+		min-height: 0;
+		flex: 1 1 auto;
+		overflow-y: auto;
+		overflow-x: hidden;
+		padding: 0 8px 12px 0;
 	}
 
 	.resources-filters {
@@ -254,16 +340,24 @@
 	}
 
 	.resource-cards {
+		width: 100%;
+		flex: 1 1 auto;
 		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+		grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
 		gap: 18px;
+		align-content: start;
+		align-items: start;
 	}
 
 	.resource-card {
 		display: flex;
 		flex-direction: column;
-		min-height: 238px;
-		padding: 20px;
+		height: 280px;
+		min-height: 280px;
+		width: 100%;
+		max-width: 100%;
+		justify-self: stretch;
+		padding: 16px;
 		border: 1px solid #dce5fa;
 		border-radius: 18px;
 		background: #fff;
@@ -284,10 +378,22 @@
 	}
 
 	.resource-card h2 {
+		width: 100%;
+		height: 45px;
+		min-height: 45px;
+		flex: 0 0 45px;
 		margin: 18px 0 8px;
 		color: #102c7f;
 		font-size: 18px;
 		line-height: 1.25;
+		white-space: normal;
+		overflow-wrap: anywhere;
+		word-break: break-word;
+		display: -webkit-box;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 2;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 
 	.resource-author {
@@ -314,12 +420,6 @@
 		padding-top: 10px;
 	}
 
-	.tag {
-		color: #1554be;
-		font-size: 12px;
-		font-weight: 700;
-	}
-
 	.resources-state,
 	.load-more-state {
 		display: flex;
@@ -336,9 +436,25 @@
 		font-size: 13px;
 	}
 
+	.resources-pagination {
+		flex: 0 0 auto;
+		display: flex;
+		justify-content: center;
+		padding: 8px 0 0;
+	}
+
 	@media (max-width: 800px) {
 		.resources-filters {
 			grid-template-columns: 1fr;
 		}
+
+		.resource-cards {
+			grid-template-columns: 1fr;
+		}
+
+		.resource-card {
+			width: 100%;
+		}
 	}
+
 </style>
