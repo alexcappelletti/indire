@@ -7,5 +7,12 @@ export default defineEventHandler(async (event) => {
 		throw createError({ statusCode: 401, statusMessage: 'Autenticazione richiesta' });
 	}
 
-	return getOrCreateUserMetacognitivePath(event, session.sub);
+	if (!session.userId) {
+		throw createError({
+			statusCode: 401,
+			statusMessage: 'Sessione da rinnovare: effettua nuovamente il login',
+		});
+	}
+
+	return getOrCreateUserMetacognitivePath(event, session.userId, session.email);
 });

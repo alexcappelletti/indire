@@ -39,9 +39,11 @@ export default defineEventHandler(async (event) => {
 		})
 	}
 
-	await getOrCreateUserMetacognitivePath(event, payload.sub)
+	const userId = String(authorizedUser._id)
+	await getOrCreateUserMetacognitivePath(event, userId, email)
 
 	const user: SessionUser = {
+		userId,
 		sub: payload.sub,
 		name: payload.name || email,
 		email,

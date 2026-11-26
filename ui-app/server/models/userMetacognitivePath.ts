@@ -42,6 +42,7 @@ const metacognitivePathSchema = new mongoose.Schema(
 const userMetacognitivePathSchema = new mongoose.Schema(
 	{
 		userId: { type: String, required: true, trim: true, unique: true, index: true },
+		seedVersion: { type: Number, required: true, default: 1 },
 		path: { type: metacognitivePathSchema, required: true },
 	},
 	{ timestamps: true, collection: 'userMetacognitivePaths' },

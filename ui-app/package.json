@@ -9,6 +9,7 @@
 		"preview": "nuxt preview",
 		"postinstall": "nuxt prepare",
 		"resource:upload": "node --env-file=.env scripts/upload-resource.mjs",
+		"db:seed:path": "node --env-file=.env scripts/seed-metacognitive-path.mjs",
 		"format": "prettier --write \"app/**/*.{vue,ts,scss,css}\"",
 		"format:check": "prettier --check \"app/**/*.{vue,ts,scss,css}\""
 	},

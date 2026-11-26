@@ -1,17 +1,18 @@
-import type { LearningStep } from '#shared/types/learning';
+import type { LearningStep } from '../types/learning.ts';
 import type {
 	MetacognitivePath,
 	MetacognitiveOverviewItem,
 	MetacognitiveProgress,
 	ReflectionSummary,
 	UserMetacognitivePath,
-} from '#shared/types/metacognition';
+} from '../types/metacognition.ts';
+import { deriveMetacognitivePath } from '../utils/metacognition.ts';
 
 export const learningPathMock: LearningStep[] = [
 	{ number: 1, title: 'Osservare i segnali', mapLabel: 'Osservare\ni segnali', state: 'completed' },
 	{ number: 2, title: 'Organizzare le informazioni', mapLabel: 'Organizzare\nle informazioni', state: 'completed' },
-	{ number: 3, title: 'Formulare ipotesi educative', mapLabel: 'Formulare\nipotesi\neducative', state: 'completed' },
-	{ number: 4, title: 'Confrontare interpretazioni', mapLabel: 'Confrontare\ninterpretazioni', state: 'current' },
+	{ number: 3, title: 'Formulare ipotesi educative', mapLabel: 'Formulare\nipotesi\neducative', state: 'current' },
+	{ number: 4, title: 'Confrontare interpretazioni', mapLabel: 'Confrontare\ninterpretazioni', state: 'upcoming' },
 	{ number: 5, title: 'Condividere e coinvolgere', mapLabel: 'Condividere\ne coinvolgere', state: 'upcoming' },
 	{ number: 6, title: 'Orientare alla rete', mapLabel: 'Orientare\nalla rete', state: 'upcoming' },
 	{ number: 7, title: "Pianificare l'azione educativa", mapLabel: "Pianificare\nl'azione\neducativa", state: 'upcoming' },
@@ -24,8 +25,6 @@ export const reflectionSummaryMock: ReflectionSummary = {
 };
 
 export const metacognitiveProgressMock: MetacognitiveProgress = {
-	completedSteps: 3,
-	stepsToExplore: 2,
 	openQuestion: 'Quali ulteriori evidenze, scolastiche o relazionali, possono aiutarti a discriminare tra le ipotesi?',
 	currentStepState: 'current',
 };
@@ -36,12 +35,12 @@ export const overviewItemsMock: MetacognitiveOverviewItem[] = [
 	{ label: 'Domanda ancora aperta', detail: metacognitiveProgressMock.openQuestion, state: 'question' },
 ];
 
-export const metacognitivePathMock: MetacognitivePath = {
+export const metacognitivePathMock: MetacognitivePath = deriveMetacognitivePath({
 	steps: learningPathMock,
 	progress: metacognitiveProgressMock,
 	summary: reflectionSummaryMock,
 	overview: overviewItemsMock,
-};
+});
 
 export const userMetacognitivePathMock: UserMetacognitivePath = {
 	userId: 'mock-user-001',
